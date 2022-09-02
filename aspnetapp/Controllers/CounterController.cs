@@ -22,10 +22,11 @@ namespace aspnetapp.Controllers
     public class CounterController : ControllerBase
     {
         private readonly CounterContext _context;
+       private readonly IHttpClientFactory _httpClientFactory;
 
-        public CounterController(CounterContext context)
+        public CounterController(CounterContext context,IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _context = context;   _httpClientFactory = httpClientFactory;
         }
         private async Task<Counter> getCounterWithInit()
         {
@@ -72,6 +73,14 @@ namespace aspnetapp.Controllers
             else {
                 return BadRequest();
             }
+        }
+        [HttpGet]
+        public async async Task<ActionResult> GetToken()
+        { 
+        var url="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx6361ea8c36926090&secret=06adcc73627d34b22e8b211b388c57f5";
+              var client = _httpClientFactory.CreateClient();
+              var response = await client.GetAsync(url);
+            return new JsonResult(response.Content);
         }
     }
 }
